@@ -9,10 +9,10 @@ class NeuralNetwork(nn.Module):
     def __init__(self):
         super(NeuralNetwork, self).__init__()
         self.linear_relu_stack = nn.Sequential(
-            nn.Linear(150, 64),
-            nn.ReLU(),
-            nn.Linear(64, 32),
-            nn.ReLU(),
+            nn.Linear(150, 64, bias=True),
+            nn.LeakyReLU(),
+            nn.Linear(64, 32, bias=True),
+            nn.LeakyReLU(),
             nn.Linear(32, 1),
         )
 
@@ -26,17 +26,13 @@ if __name__ == '__main__':
     train_csv = pd.read_csv('input/train.csv')
     y = train_csv['SalePrice']
 
-    print(train_csv.tail(5))
-    print(test_csv.tail(5))
+    # 데이터 전처리
     divider_index = len(train_csv)
-    total_csv = train_csv.append(test_csv)
+    total_csv = pd.concat([train_csv, test_csv])
     total_data = total_csv.dropna(axis=1)
     total_data = pd.get_dummies(total_data)
     train_data = total_data[:divider_index]
     test_data = total_data[divider_index:]
-    print(train_csv.tail(5))
-    print(test_csv.tail(5))
-
 
     # 데이터 정규화
     ss = StandardScaler()
@@ -51,7 +47,7 @@ if __name__ == '__main__':
 
     model = NeuralNetwork()
     loss_fn = nn.MSELoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.2)
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.15)
 
     epochs = 50000
     hist = np.zeros(epochs)
