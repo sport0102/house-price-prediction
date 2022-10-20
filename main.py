@@ -80,9 +80,7 @@ if __name__ == '__main__':
     # 검증 데이터로 검증
     result = model.forward(val_scaled)
     score = root_mean_squared_error(val_target, result.squeeze())
-    score2 = root_mean_squared_error(train_target, result2.squeeze())
-    print("score: ", score.item())
-    print("score2: ", score2.item())
+    print("score:", score.item())
 
     # 테스트 데이터 예측
     # result = model.forward(test_scaled)
