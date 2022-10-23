@@ -4,6 +4,9 @@ import torch
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from torch import nn
+from torch.utils.data import DataLoader
+from torch.utils.data import TensorDataset
+
 
 
 class NeuralNetwork(nn.Module):
@@ -61,21 +64,28 @@ if __name__ == '__main__':
     test_scaled = ss.transform(test_data)
     test_scaled = torch.tensor(test_scaled).float()
 
+    # 모델 생성
     model = NeuralNetwork()
     loss_fn = nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=0.15)
 
-    epochs = 50000
+    # 배치 지정
+    dataset = TensorDataset(train_scaled, train_target)
+    dataloader = DataLoader(dataset, batch_size=4, shuffle=True)
+
+    # 에포크 지정
+    epochs = 10000
     hist = np.zeros(epochs)
     for t in range(epochs):
-        logits = model(train_scaled)
-        loss = loss_fn(logits.squeeze(), train_target)
-        if t % 100 == 99:
-            print(t, loss.item())
-        hist[t] = loss.item()
-        optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()
+        for batch_idx, samples in enumerate(dataloader):
+            x_train, y_train = samples
+            logits = model(x_train)
+            loss = loss_fn(logits.squeeze(), y_train)
+            hist[t] = loss.item()
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+        print('Epoch %d, Loss %f' % (t, loss.item()))
 
     # 검증 데이터로 검증
     result = model.forward(val_scaled)
