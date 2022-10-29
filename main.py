@@ -65,7 +65,7 @@ if __name__ == '__main__':
     dataloader = DataLoader(dataset, batch_size=2 ** 4, shuffle=True, drop_last=False)
 
     # 에포크 지정
-    epochs = 100
+    epochs = 200
     hist = np.zeros(epochs)
     for t in range(epochs):
         for batch_idx, samples in enumerate(dataloader):
