@@ -7,26 +7,24 @@ from torch import nn
 from torch.utils.data import DataLoader
 from torch.utils.data import TensorDataset
 
+from data.data_loader import DataManager
 from model.neural_network import NeuralNetwork
 from util.loss import root_mean_squared_error
 
 if __name__ == '__main__':
     # 데이터 로드
-    test_csv = pd.read_csv('input/test.csv')
-    train_csv = pd.read_csv('input/train.csv')
-    y = train_csv['SalePrice']
-    # train_csv = train_csv[['MSSubClass', 'OverallQual', 'OverallCond', 'LotArea']]
+    train_data_file_path = 'input/train.csv'
+    test_data_file_path = 'input/test.csv'
+    target_column = 'SalePrice'
+    data_manager = DataManager(train_data_file_path=train_data_file_path,
+                               test_data_file_path=test_data_file_path,
+                               target_column=target_column)
 
     # 데이터 전처리
-    divider_index = len(train_csv)
-    total_csv = pd.concat([train_csv, test_csv])
-    total_data = total_csv.dropna(axis=1)
-    total_data = pd.get_dummies(total_data)
-    train_data = total_data[:divider_index]
-    test_data = total_data[divider_index:]
+    data_manager.preprocess()
 
-    # 데이터 분할 (테스트 데이터, 검증 데이터)
-    train_input, val_input, train_target, val_target = train_test_split(train_data, y, test_size=0.2)
+    # 검증 데이터 분할
+    data_manager.split_validation_data()
 
     # 데이터 정규화
     ss_train_scaled = StandardScaler()
