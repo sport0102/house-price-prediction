@@ -66,6 +66,11 @@ class DataManager:
     def get_data(self):
         return self.train_input, self.train_target, self.valid_input, self.valid_target, self.test_input
 
+    def merge_train_valid_data(self):
+        self.train_input = torch.cat([self.train_input, self.valid_input])
+        self.train_target = torch.cat([self.train_target, self.valid_target])
+        return self.train_input, self.train_target
+
     def export_csv(self, export_file_path, result):
         result = pd.DataFrame(result.detach().numpy())
         result = result.rename(columns={0: 'SalePrice'})
