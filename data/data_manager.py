@@ -9,6 +9,7 @@ class DataManager:
     def __init__(self, train_data_file_path, test_data_file_path, target_column):
         self.train_df = pd.read_csv(train_data_file_path)
         self.test_df = pd.read_csv(test_data_file_path)
+        self.test_id_list = self.test_df['Id']
         self.train_df_target = self.train_df[target_column]
         self.train_input = None
         self.train_target = None
@@ -74,5 +75,5 @@ class DataManager:
     def export_csv(self, export_file_path, result):
         result = pd.DataFrame(result.detach().numpy())
         result = result.rename(columns={0: 'SalePrice'})
-        result['Id'] = self.test_df['Id']
+        result['Id'] = self.test_id_list
         result.to_csv(export_file_path, index=False)
