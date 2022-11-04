@@ -10,6 +10,15 @@ if __name__ == '__main__':
     data_manager = DataManager(train_data_file_path=train_data_file_path,
                                test_data_file_path=test_data_file_path,
                                target_column=target_column)
+    # data_manager.set_use_column(
+    #     ['MSSubClass', 'MSZoning', 'LotShape', 'LotArea', 'LandContour', 'Condition1', 'BldgType', 'HouseStyle',
+    #      'OverallQual', 'YearBuilt', 'YearRemodAdd', 'ExterQual', 'BsmtFinType1', 'BsmtFullBath', 'FullBath',
+    #      'TotRmsAbvGrd', 'Functional', 'GarageCars', 'GarageQual', 'PoolQC'])
+    data_manager.set_use_column(
+        ['LandContour', 'Condition1', 'BldgType', 'HouseStyle',
+         'OverallQual', 'YearBuilt', 'YearRemodAdd', 'ExterQual', 'BsmtFinType1', 'BsmtFullBath',
+         'Functional', 'GarageCars', 'GarageQual', 'PoolQC'])
+
 
     # 데이터 전처리
     data_manager.preprocess()
@@ -23,11 +32,13 @@ if __name__ == '__main__':
     train_input, train_target, valid_input, valid_target, test_input = data_manager.get_data()
 
     # 모델 생성
+    batch_size = 2 ** 4
+    epoch = 1000
     model = NeuralNetwork(input_length=train_input.shape[1], loss_fn_name='mse')
-    model.set_optimizer(optimizer_name='adam', learning_rate=0.001)
+    model.set_optimizer(optimizer_name='adam', learning_rate=0.0001)
     model.set_dataset(train_input, train_target)
-    model.set_dataloader(batch_size=2 ** 4)
-    model.run(epochs=10000)
+    model.set_dataloader(batch_size=batch_size)
+    model.run(epochs=epoch)
     model.draw_history()
 
     # 검증 데이터로 검증
@@ -40,12 +51,12 @@ if __name__ == '__main__':
 
     # 검증 데이터 합쳐서 학습
     train_input, train_target = data_manager.merge_train_valid_data()
-    model.init_model()
+    epoch = 50
+    model.set_optimizer(optimizer_name='adam', learning_rate=0.00001)
     model.set_dataset(train_input, train_target)
-    model.set_dataloader(batch_size=2 ** 4)
-    model.run(epochs=10000)
+    model.set_dataloader(batch_size=batch_size)
+    model.run(epochs=epoch)
     model.draw_history()
-
 
     # 테스트 데이터 예측
     model.eval()
