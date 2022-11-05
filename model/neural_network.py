@@ -25,6 +25,7 @@ class NeuralNetwork(nn.Module):
         )
         self.loss_fn = loss_fn[loss_fn_name]
         self.optimizer = None
+        self.scheduler = None
         self.dataset = None
         self.dataloader = None
         self.history = None
@@ -32,8 +33,16 @@ class NeuralNetwork(nn.Module):
     def set_optimizer(self, optimizer_name, learning_rate):
         optimizer = {
             'adam': torch.optim.Adam(self.parameters(), lr=learning_rate),
+            'sgd': torch.optim.SGD(self.parameters(), lr=learning_rate),
         }
         self.optimizer = optimizer[optimizer_name]
+        self.scheduler = torch.optim.lr_scheduler.LambdaLR(self.optimizer, lr_lambda=lambda epoch: 1 ** epoch)
+
+    def set_scheduler(self, scheduler_name, gamma):
+        scheduler = {
+            'lambda': torch.optim.lr_scheduler.LambdaLR(self.optimizer, lr_lambda=lambda epoch: gamma ** epoch),
+        }
+        self.scheduler = scheduler[scheduler_name]
 
     def set_dataset(self, train_input, train_target):
         self.dataset = TensorDataset(train_input, train_target)
@@ -64,6 +73,7 @@ class NeuralNetwork(nn.Module):
                 self.optimizer.zero_grad()
                 loss.backward()
                 self.optimizer.step()
+                self.scheduler.step()
             if t % 100 == 0:
                 print('Epoch %d, Loss %f' % (t, loss.item()))
 
