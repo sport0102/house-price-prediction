@@ -35,7 +35,9 @@ if __name__ == '__main__':
     batch_size = 2 ** 4
     epoch = 1000
     model = NeuralNetwork(input_length=train_input.shape[1], loss_fn_name='mse')
-    model.set_optimizer(optimizer_name='adam', learning_rate=0.0001)
+    model.train()
+    model.set_optimizer(optimizer_name='adam', learning_rate=0.001)
+    model.set_scheduler(scheduler_name='lambda', gamma=0.99)
     model.set_dataset(train_input, train_target)
     model.set_dataloader(batch_size=batch_size)
     model.run(epochs=epoch)

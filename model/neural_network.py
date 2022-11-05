@@ -14,12 +14,14 @@ class NeuralNetwork(nn.Module):
         self.linear_relu_stack = nn.Sequential(
             nn.Linear(input_length, 64, bias=True),
             nn.BatchNorm1d(64),
+            nn.Dropout(p=0.5),
             nn.ReLU(),
             nn.Linear(64, 32, bias=True),
-            nn.Dropout(p=0.2),
+            nn.Dropout(p=0.5),
             nn.ReLU(),
             nn.Linear(32, 16, bias=True),
             nn.BatchNorm1d(16),
+            nn.Dropout(p=0.5),
             nn.ReLU(),
             nn.Linear(16, 1),
         )
