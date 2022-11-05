@@ -37,7 +37,6 @@ if __name__ == '__main__':
     model = NeuralNetwork(input_length=train_input.shape[1], loss_fn_name='mse')
     model.train()
     model.set_optimizer(optimizer_name='adam', learning_rate=0.001)
-    model.set_scheduler(scheduler_name='lambda', gamma=0.99)
     model.set_dataset(train_input, train_target)
     model.set_dataloader(batch_size=batch_size)
     model.run(epochs=epoch)
@@ -54,7 +53,8 @@ if __name__ == '__main__':
     # 검증 데이터 합쳐서 학습
     train_input, train_target = data_manager.merge_train_valid_data()
     epoch = 50
-    model.set_optimizer(optimizer_name='adam', learning_rate=0.00001)
+    model.train()
+    model.set_optimizer(optimizer_name='adam', learning_rate=0.001)
     model.set_dataset(train_input, train_target)
     model.set_dataloader(batch_size=batch_size)
     model.run(epochs=epoch)
